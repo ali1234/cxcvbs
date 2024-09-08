@@ -3,6 +3,7 @@ import os
 import sys
 import ctypes
 import numpy as np
+from PIL import Image
 
 from sdl2 import *
 
@@ -16,12 +17,12 @@ class Video:
     def __init__(self, cxadc, registers, sample_rate=28636363, refresh=25, lines=625, show_regs=True):
         self._cxadc = cxadc
         self._registers = registers
-        self._sample_rate = sample_rate
-        self._refresh = refresh
         self._lines = lines
         self._cmdthread = None
         self.show_regs = show_regs
-        self.calculate_timings()
+        self._sample_rate = sample_rate
+        self.set_standard(refresh, lines)
+        self.screenshot = False
 
         SDL_Init(SDL_INIT_VIDEO)
         self._window = SDL_CreateWindow(b"cxcvbs",
@@ -35,17 +36,33 @@ class Video:
                                     2048, 1024)
         SDL_SetTextureScaleMode(self._texture, SDL_ScaleModeBest)
         self._palette = np.repeat(np.arange(256, dtype=np.uint8).reshape(-1, 1), 4, axis=1)
-        for n in range(70):
-            self._palette[n] = (0, 0, 80 + (2 * n), 0)
+        for n in range(64):
+            self._palette[n] = (0, 0, 255 - (4 * n), 255)
+        for n in range(220, 256):
+            self._palette[n] = (0, 255, 0, 255)
 
     def calculate_timings(self):
         self._samples_per_line = round(self._sample_rate / (self._refresh * self._lines))
         self._samples_per_frame = int(self._sample_rate / self._refresh)
         self._frac = (self._sample_rate / self._refresh) - self._samples_per_frame
 
+    def set_standard(self, refresh, lines):
+        self._refresh = refresh
+        self._lines = lines
+        self.calculate_timings()
+
+    @property
+    def sample_rate(self):
+        return self._sample_rate
+
+    @sample_rate.setter
+    def sample_rate(self, rate):
+        self._sample_rate = rate
+        self.calculate_timings()
+
     def draw_bits(self, data, xpos, ypos):
         for y, i in enumerate(data):
-            SDL_SetRenderDrawColor(self._renderer, 255, 255, 255, 0)
+            SDL_SetRenderDrawColor(self._renderer, 255, 255, 255, 255)
             for x in range(32):
                 b = (i >> x) & 1
                 xp = xpos + (x * 16) + ((x // 8) * 4)
@@ -78,7 +95,7 @@ class Video:
                 c -= 1
                 self._cxadc.read(1)
             data = self._palette[np.frombuffer(data, dtype=np.uint8)]
-            SDL_SetRenderDrawColor(self._renderer, 0, 0, 0, 0)
+            SDL_SetRenderDrawColor(self._renderer, 0, 0, 0, 255)
             SDL_RenderClear(self._renderer)
             SDL_UpdateTexture(self._texture, SDL_Rect(0, 0, self._samples_per_line, self._lines), data.tobytes(), self._samples_per_line*4)
             SDL_RenderCopy(self._renderer, self._texture, SDL_Rect(0, 0, self._samples_per_line, self._lines), SDL_Rect(0, 0, screenw, self._lines if self.show_regs else screenh))
@@ -89,7 +106,12 @@ class Video:
                 self.draw_bits(self._registers.read_block(0x310200, 0x28), 20 + (2*1680//3), 636)
 
             SDL_RenderPresent(self._renderer)
-            #SDL_Delay(1000//25)
+
+            if self.screenshot:
+                buffer = np.zeros((screenh, screenw, 4), dtype=np.uint8)
+                SDL_RenderReadPixels(self._renderer, SDL_Rect(0, 0, screenw, screenh), SDL_PIXELFORMAT_ABGR8888, buffer.ctypes.data, screenw*4)
+                Image.fromarray(buffer).save("screenshot.png")
+                self.screenshot = False
 
         SDL_DestroyWindow(self._window)
         return 0

@@ -17,6 +17,9 @@ class Command(cmd.Cmd):
         #"set verten 1",
         #"set htotal 0x7ff",
         #"mux 2",
+        #"import eNpjYTRkWMHAwNDAQBcgCKGYGDga7OGCbjCGABASAkyGDBpYhDn+e8jB2AEaQBX/IUYBAOZ/BhY=",
+        #"mux 2",
+        #"pal",
     ]
 
     def __init__(self, memory, video=None, init_cmd=None):
@@ -33,7 +36,6 @@ class Command(cmd.Cmd):
 
     def do_hd(self, arg):
         """Dump all registers as hex"""
-        blobs = []
         for addr, size in ((0x310100, 0xac), (0x310200, 0x28)):
             data = self._memory.read_block(addr, size)
             for n in range(0, size, 0x20):
@@ -47,7 +49,7 @@ class Command(cmd.Cmd):
             blobs.append(struct.pack('<II', addr, size))
             blobs.append(struct.pack(f'<{size>>2}I', *data))
         blob = base64.b64encode(zlib.compress(b''.join(blobs), level=9))
-        print("To restore these settings run:")
+        print("To restore current settings run:")
         print("    import", blob.decode('ascii'))
 
     def do_import(self, arg):
@@ -66,7 +68,7 @@ class Command(cmd.Cmd):
                 for n in range(0, size, 4):
                     self._memory.write_word(addr+n, data[n>>2], mask=0xffffffff)
                 pos += size
-            self.onecmd("dump")
+            self.onecmd("hd")
 
     def do_describe(self, arg):
         """Describe a register or address"""
@@ -102,6 +104,20 @@ class Command(cmd.Cmd):
     def do_mux(self, arg):
         """Set the input mux (YADC_SEL)"""
         self.onecmd(f'set yadc_sel {arg}')
+
+    def do_pal(self, arg):
+        """Set video window timings for PAL"""
+        if self._video:
+            self._video.set_standard(25, 625)
+
+    def do_ntsc(self, arg):
+        """Set video window timings for NTSC"""
+        if self._video:
+            self._video.set_standard(29.97, 525)
+
+    def do_screenshot(self, arg):
+        if self._video:
+            self._video.screenshot = True
 
     def do_exit(self, arg):
         """Exit the program"""
