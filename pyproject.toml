@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "cxcvbs"
+authors = [{name = "Alistair Buxton", email = "a.j.buxton@gmail.com"}]
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
+dynamic = ["version", "description"]
+dependencies = [
+    "click",
+    "numpy",
+    "pysdl2",
+    "pyyaml",
+]
+
+[project.urls]
+Home = "https://github.com/ali1234/cxcvbs"
+
+[project.scripts]
+cxcvbs = "cxcvbs.__main__:main"

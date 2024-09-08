@@ -1,0 +1,1444 @@
+Device Status:
+  addresses:
+    0x310100: 
+  fields:
+    SCHERR:
+      description: "Subcarrier loop filter error."
+      type: Scalar
+      offset: 16
+      length: 15
+      mode: RO
+    NSPLAY:
+      description: "Special Play Status. Input vertical sync timing non-standard.\n\n0 = in VCR special play mode\n1 = Normal mode"
+      type: Boolean
+      offset: 7
+      mode: RO
+    VPRES:
+      description: "Video Present.\n\n0 = No video detected\n1 = Video detected"
+      type: Boolean
+      offset: 6
+      mode: RO
+    HLOCK:
+      description: "Horizontal Lock.\n\n0 = Not locked\n1 = Locked"
+      type: Boolean
+      offset: 5
+      mode: RO
+    FIELD:
+      description: "Field Identifier.\n\n0 = Odd field\n1 = Even field"
+      type: Boolean
+      offset: 4
+      mode: RO
+    NUML:
+      description: "Number of lines per frame.\n\n0 = 525\n1 = 625"
+      type: Boolean
+      offset: 3
+      mode: RO
+    PLL:
+      description: "A value of 0 indicates the PLL is out of lock. Should be checked after initializing the PLL and cleared until no longer set (up to 100 mS)."
+      type: Boolean
+      offset: 2
+      mode: RO
+    LOF:
+      description: "Luma ADC Over/Underflow. If a Y-A/D overflow or underflow occurs, this bit is set. It is reset by writing a one to this bit."
+      type: Boolean
+      offset: 1
+      mode: RR
+    COF:
+      description: "Chroma ADC Over/Underflow. If a C-A/D overflow or underflow occurs, this bit is set. It is reset by writing a one to this bit."
+      type: Boolean
+      offset: 0
+      mode: RR
+Input Format:
+  addresses:
+    0x310104: 
+  fields:
+    PESRC_SEL:
+      description: "0 = pixel engine input selects analog input data and clock 1 = pixel engine input selects digital input data and clock (VIP input source)"
+      type: Boolean
+      offset: 17
+      mode: RW
+    SVID_C_SEL:
+      description: "0 = select audio input for C/Audio-ADC 1 = select C in Y/C mode input for C/Audio-ADC"
+      type: Boolean
+      offset: 16
+      mode: RW
+    YADC_SEL:
+      description: "Video input source selection. 00 = MUX1 01 = MUX2 10 = MUX3 11 = MUX4"
+      type: Scalar
+      offset: 14
+      length: 2
+      mode: RW
+    AGCEN:
+      description: "AGC Enable 0 = disable AGC 1 = enable AGC"
+      type: Boolean
+      offset: 13
+      mode: RW
+    NCAGC:
+      description: "AGC Gain 0 = coarse AGC gain adjust (+1) 1 = normal AGC gain (+4)"
+      type: Boolean
+      offset: 12
+      mode: RW
+    WCEN:
+      description: "White crush circuit monitors A/D for overflows and automatically adjusts input signal gain. 0 = Nonadaptive AGC 1 = Adaptive AGC"
+      type: Boolean
+      offset: 11
+      mode: RW
+    CAGCEN:
+      description: "0 = Chroma AGC disabled (SECAM) 1 = Chroma AGC enabled (NTSC/PAL)"
+      type: Boolean
+      offset: 10
+      mode: RW
+    CKILLEN:
+      description: "Enable low-color removal for all video standards including SECAM. 0 = Color killer disabled 1 = Color killer enabled"
+      type: Boolean
+      offset: 9
+      mode: RW
+    SCSPD:
+      description: "Chroma subcarrier lock speed. 0 = Normal 1 = Fast"
+      type: Boolean
+      offset: 8
+      mode: RW
+    VERTEN:
+      description: "A value of 1 enables vertical sync detection in determining VPRES status."
+      type: Boolean
+      offset: 7
+      mode: RW
+    SVID:
+      description: "0 = Composite Video (does NOT auto-disable C/ Audio-ADC) 1 = Y/C component Video (auto-disables notch filter, does NOT auto select C input C/Audio-ADC)"
+      type: Boolean
+      offset: 4
+      mode: RW
+    FMT:
+      description: "Selects input video format. 0000 = Auto format detection 0001 = NTSC-M 0010 = NTSC-J 0011 = NTSC-4.43 0100 = PAL-BDGHI 0101 = PAL-M 0110 = PAL-N 0111 = PAL-Nc 1000 = PAL-60 1001 = SECAM"
+      type: Scalar
+      offset: 0
+      length: 4
+      mode: RW
+Temporal Decimation:
+  addresses:
+    0x310108: 
+  fields:
+    HL_LP:
+      description: "Horizontal Loop Lowpass Filter Speed"
+      type: Scalar
+      offset: 10
+      length: 2
+      mode: RW
+    CDISE:
+      description: "Comparator Clamp Enable 0 = enable 1 = disable"
+      type: Boolean
+      offset: 8
+      mode: RW
+    TDFIELD:
+      description: "Defines whether decimation is by fields or frames. 0 = Decimate frames 1 = Decimate fields"
+      type: Boolean
+      offset: 7
+      mode: RW
+    TDALGN:
+      description: "Aligns start of decimation with even or odd field. 0 = Start on odd field 1 = Start on even field"
+      type: Boolean
+      offset: 6
+      mode: RW
+    TEMPDEC:
+      description: "Number of fields or frames dropped out of 50 (625/ 50) or 60(525/60). This value should not exceed 60 for 60 Hz systems, or 50 for 50 Hz systems."
+      type: Scalar
+      offset: 0
+      length: 6
+      mode: RW
+AGC/Burst Delays:
+  addresses:
+    0x31010c: 
+  fields:
+    BGDEL:
+      description: "The burst gate delay for subcarrier sampling. The following equation should be used to determine the value for the register: BDELAY = (6.5us * video decoder core sample frequency) + 21 Example for an NTSC input signal: BDELAY = (6.5 µs x 13.50 MHz + 21 = 109 (0x6D)"
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    AGCDEL:
+      description: "AGC gate delay for back-porch sampling. The following equation should be used to determine the value for this register: ADELAY = (6.8 µs * video decoder core sample frequency) + 15 Example for an NTSC input signal: ADELAY = (6.8 µs * 13.5 MHz) + 15 = 107 (0x6B)"
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+Contrast and Brightness:
+  addresses:
+    0x310110: 
+  fields:
+    CNTRST:
+      description: "The decoded luminance portion of the video is multiplied by this contrast value. Values from 00 to FF are allowed."
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    BRITE:
+      description: "Brightness offset applied to the video. Values from 00 to FF are allowed. The 2’s complement value programmed into this register is added to the decoded luminance portion of the video signal. Brightness is applied after contrast."
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+UV Saturation:
+  addresses:
+    0x310114: 
+  fields:
+    VSAT:
+      description: "SAT_V gain will apply to the decoded V vector of the chrominance. Values from 00 to FF are allowed."
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    USAT:
+      description: "SAT_U gain will apply to the decoded U vector of the chrominance. Values from 00 to FF are allowed. Note(s):  For ITU-R BT.656 decoding or SECAM video, USAT and VSAT must have equal values."
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+Hue:
+  addresses:
+    0x310118: 
+  fields:
+    HUE:
+      description: "HUE will apply the phase offset of the decoders internal subcarrier. Values from 00 to FF are allowed."
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+White Crush Up/Down:
+  addresses:
+    0x31011c: 
+  fields:
+    WCFRAME:
+      description: "This bit programs the rate at which the DNCNT and UPCNT values are accumulated. 0 = Once per field 1 = Once per frame"
+      type: Boolean
+      offset: 14
+      mode: RW
+    DNVAL:
+      description: "White crush down count value. 2’s complement, a negative sign bit is assumed i.e., 3F = -1 3E = -2 … … 00 = –64"
+      type: Scalar
+      offset: 8
+      length: 6
+      mode: RW
+    MAJSEL:
+      description: "These bits determine the majority comparison point for the white crush up function. 00 = 3/4 maximum luma 01 = 1/2 maximum luma 10 = 1/4 maximum luma 11 = Automatic"
+      type: Scalar
+      offset: 6
+      length: 2
+      mode: RW
+    UPVAL:
+      description: "White crush up value. The value programmed in these bits accumulates once per field or frame, in the case where the majority of the pixels in the active region of the image are below a selected value. The accumulated value determines the extent to which the AGC value needs to be raised in order to keep the SYNC level proportionate with the white level. The UPCNT value is assumed positive i.e., 3F = 63 3E = 62 …. … 00 = 0"
+      type: Scalar
+      offset: 0
+      length: 6
+      mode: RW
+Y/C Separation Notch Filter Selection and Total Pixel Count:
+  addresses:
+    0x310120: 
+  fields:
+    NOTCHSEL:
+      description: "Coefficient selection of HL notch filter 00 = use 4x Fsc optimized filter 01 = use square pixel freq. optimized filter 10 = use 13.5 MHz NTSC optimized filter 11 = use 13.5 MHz PAL optimized filter"
+      type: Scalar
+      offset: 11
+      length: 2
+      mode: RW
+    HTOTAL:
+      description: "Programmable total number of pixel per line"
+      type: Scalar
+      offset: 0
+      length: 11
+      mode: RW
+Horizontal Delay:
+  addresses:
+    0x310124: Even Field
+    0x310128: Odd Field
+  fields:
+    HBLANK:
+      description: "This is the horizontal delay. It defines the number of scaled pixels between the falling edge of HRESET and the start of active video. Values between 1 and 1023 are allowed. For NTSC: hblank = 9.4 x Fsample For PAL: hblank = 10.5 x Fsample"
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Vertical Delay:
+  addresses:
+    0x31012c: Odd Field
+    0x310130: Even Field
+  fields:
+    VBLANK:
+      description: "This is the vertical delay. It defines the number of half lines between the trailing edge of VRESET and the start of active video. Values between 1 and 1023 are allowed."
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Vertical Delay in ITU-R BT.656 output mode:
+  addresses:
+    0x310134: Odd Field
+    0x310138: Even Field
+  fields:
+    V656BLANK:
+      description: "This is the vertical delay used in ITU-R BT.656 mode. It defines the number of half lines between the trailing edge of VRESET and the start of active video."
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+Horizontal Active:
+  addresses:
+    0x31013c: Even Field
+    0x310140: Odd Field
+  fields:
+    HACTIVE:
+      description: "This is the horizontal active. It defines the number of horizontal active pixels per line. Values between 1 and 1023 are allowed."
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Vertical Active:
+  addresses:
+    0x310144: Even Field
+    0x310148: Odd Field
+  fields:
+    VACTIVE:
+      description: "This is the vertical active. It defines the number of half lines used in the vertical scaling process. Values between 1 and 1023 are allowed."
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Horizontal Scaling:
+  addresses:
+    0x31014c: Even Field
+    0x310150: Odd Field
+  fields:
+    HSCALE:
+      description: "Horizontal scaling ratio."
+      type: Scalar
+      offset: 0
+      length: 16
+      mode: RW
+Vertical Scaling:
+  addresses:
+    0x310154: Even Field
+    0x310158: Odd Field
+  fields:
+    VSCALE:
+      description: "Vertical Scaling Ratio. The following equation should be used to determine the value for this register: VSF = (0x10000 –{[(scaling_ratio-1)*512}) and 0x1FFF"
+      type: Scalar
+      offset: 0
+      length: 13
+      mode: RW
+Horizontal/Vertical Filters Control:
+  addresses:
+    0x31015c: Even Field
+    0x310160: Odd Field
+  fields:
+    P3LPFSEL:
+      description: "Optional LPF select in chroma path 0 = bypass 1 = enable (1 + z-1)/2 filter"
+      type: Boolean
+      offset: 22
+      mode: RW
+    P2LPFSEL:
+      description: "Optional LPF select in chroma path 0 = bypass 1 = enable (1 + z-1)/2 filter"
+      type: Boolean
+      offset: 21
+      mode: RW
+    P1LPFSEL:
+      description: "Optional LPF select in chroma path 0 = bypass 1 = enable (1 + z-2)/2 filter"
+      type: Boolean
+      offset: 20
+      mode: RW
+    CFILT:
+      description: "If this bit is set, this chroma filter is used when luma is not remodulated. 0 = bypass 1 = enable (1 + 2z-2 + z-4)/4 filter"
+      type: Boolean
+      offset: 19
+      mode: RW
+    SNOTCH:
+      description: "Secam luma notch filter 0 = disable 1 = enable"
+      type: Boolean
+      offset: 18
+      mode: RW
+    CLPF3SEL:
+      description: "Third chroma demodulation LPF selection. Used with SECAM video only. 0 = bypass 1 = enable (1 + z-1)/2 filter"
+      type: Boolean
+      offset: 17
+      mode: RW
+    CLPF2SEL:
+      description: "Second chroma demodulation LPF selection. Used with SECAM video only. 0 = bypass 1 = enable (1 + z-1)/2 filter"
+      type: Boolean
+      offset: 16
+      mode: RW
+    CLPF1SEL:
+      description: "First chroma demodulation LPF selection. Used with SECAM video only. 00 = use 11-tap 01 = use 11-tap and 3-tap ([1 + z-2]/2) 10 = use 29-tap (for SECAM) 11 = reserved"
+      type: Scalar
+      offset: 14
+      length: 2
+      mode: RW
+    LNOTCH:
+      description: "0 = Enable notch filter 1 = Disable (recommended for monochrome input – enables full luma bandwidth)"
+      type: Boolean
+      offset: 13
+      mode: RW
+    LDEC:
+      description: "0 = Enable luma decimation filter 1 = Disable luma decimation"
+      type: Boolean
+      offset: 12
+      mode: RW
+    HFILT:
+      description: "When LDEC is a 0, used to select which horizontal low pass filter is used. 00 = AUTO 01 = CIF 10 = QCIF (Required for SECAM) 11 = ICON"
+      type: Scalar
+      offset: 10
+      length: 2
+      mode: RW
+    PEAKEN:
+      description: "Enables luminance peaking filters."
+      type: Boolean
+      offset: 9
+      mode: RW
+    PSEL:
+      description: "Selects peaking response. 00 = +2 dB at 3.58/4.43 MHz 01 = +3.5 dB at 3.58/4.43 MHz 10 = +5.0 dB at 3.58/4.43 MHz Fsc 11 = +6.0 dB at 3.58/4.43 MHz Fsc"
+      type: Scalar
+      offset: 7
+      length: 2
+      mode: RW
+    COMB:
+      description: "Selects comb filter. 00 = Full Comb 01 = Chroma comb only 10 = reserved 11 = none"
+      type: Scalar
+      offset: 5
+      length: 2
+      mode: RW
+    FLDALGN:
+      description: "Field-aligned vertical scaling 0 = Non field-aligned. Disables Interfield Interpolation 1 = Field-aligned. Enables Interfield Interpolation"
+      type: Boolean
+      offset: 4
+      mode: RW
+    VINT:
+      description: "VS Interlace Format 0 = Non-interlaced Vertical Scaling. Use for single field capture 1 = Interlaced Vertical Scaling. Use for capturing both fields"
+      type: Boolean
+      offset: 3
+      mode: RW
+    VFILT:
+      description: "These bits control the number of taps in the Vertical Scaling Filter. The number of taps must be chosen in conjunction with the horizontal scale factor to ensure the needed data does not overflow the internal FIFO. 000 = 2-tap interpolation only.(1) 001 = 3-tap interpolation.(2) 010 = 4-tap interpolation.(3) 011 = 5-tap interpolation.(3) 100 = 2-tap and no interpolation.(1) 101 = 3-tap and no interpolation.(2) 110 = 4-tap and no interpolation.(3) 111 = 5-tap and no interpolation.(3)"
+      type: Scalar
+      offset: 0
+      length: 3
+      mode: RW
+Output Format and 2H Comb Control:
+  addresses:
+    0x310164: 
+  fields:
+    PREVREMOD:
+      description: "(PAL video only) Enable previous line remodulation; must be used in conjunction with COMBALT = 1"
+      type: Boolean
+      offset: 28
+      mode: RW
+    COMBALT:
+      description: "3 Line/2 Line adaptive comb filter 0 = Disable (PAL/SECAM) 1 = Enable (NTSC)"
+      type: Boolean
+      offset: 27
+      mode: RW
+    PAL_INV_PHASE:
+      description: "Used in PAL 2D comb filter mode. 0 = Normal – PAL B, D, G, H, I, and NTSC 1 = Invert – PAL M/NC"
+      type: Boolean
+      offset: 26
+      mode: RW
+    COMB_RANGE:
+      description: "Adaptive comb filter enable threshold. If COMB_RANGE = 31, the comb filter will be enabled when the pixels difference is greater than –32 and less than 31."
+      type: Scalar
+      offset: 16
+      length: 10
+      mode: RW
+    DISIFX:
+      description: "Disable IFX interpolation. 0 = Enable 1 = Disable"
+      type: Boolean
+      offset: 15
+      mode: RW
+    INVCBF:
+      description: "Invert sense of CBFLAG. 0 = Normal 1 = Invert"
+      type: Boolean
+      offset: 14
+      mode: RW
+    DISADAPT:
+      description: "Disable adaptation algorithm. 0 = Enable 1 = Disable"
+      type: Boolean
+      offset: 13
+      mode: RW
+    NARROWADAPT:
+      description: "Narrow adaptation algorithm. 0 = Normal 1 = Narrow"
+      type: Boolean
+      offset: 12
+      mode: RW
+    FORCE2H:
+      description: "Forces selection of 2H comb filtered chroma data, if 2H comb enabled with NCCOMB."
+      type: Boolean
+      offset: 11
+      mode: RW
+    FORCEREMD:
+      description: "Forces remodulation of excess chroma. 0 = Adaptive remodulation 1 = Forced remodulation"
+      type: Boolean
+      offset: 10
+      mode: RW
+    NCHROMAEN:
+      description: "Chroma 2H comb enable. 0 = Enable 1 = Disable"
+      type: Boolean
+      offset: 9
+      mode: RW
+    NREMODEN:
+      description: "Remodulation enable. 0 = Enable 1 = Disable"
+      type: Boolean
+      offset: 8
+      mode: RW
+    YCORE:
+      description: "Luma Coring. The signal is truncated to zero when level less than: 00 = 0 (no coring) 01 = 32 (5 LSBs) 10 = 64 (6 LSBs) 11 = 128 (7 LSBs)"
+      type: Scalar
+      offset: 6
+      length: 2
+      mode: RW
+    CCORE:
+      description: "Chroma Coring. The signal is truncated to zero when level less than: 00 = 0 (no coring) 01 = +7 (3 LSBs) 10 = +15 (4 LSBs) 11 = +31 (5 LSBs)"
+      type: Scalar
+      offset: 4
+      length: 2
+      mode: RW
+    RANGE:
+      description: "Luma output range. The range must be limited when using the control codes as video timing. 0 = Normal Y:[16,253], C:[2,253] 1 = Full Range Y:[0,255], C:[2,253]"
+      type: Boolean
+      offset: 3
+      mode: RW
+    HACTEXT:
+      description: "HACTIVE extend."
+      type: Boolean
+      offset: 2
+      mode: RW
+    HSFMT:
+      description: "Selects width of HRESET (CLKx1s) 0 = 64 1 = 32"
+      type: Boolean
+      offset: 1
+      mode: RW
+PLL Register:
+  addresses:
+    0x310168: 
+  fields:
+    PLL_DDS:
+      description: "A value of 1 disables the ∆Σ and forces integer-only divides."
+      type: Boolean
+      offset: 28
+      mode: RW
+    PLL_PRE:
+      description: "Reference input prescale divider: 00 = divide by 2 01 = divide by 5 10 = divide by 4 11 = divide by 3"
+      type: Scalar
+      offset: 26
+      length: 2
+      mode: RW
+    PLL_INT:
+      description: "6-bit integer divide. A value of 0 puts the PLL in a power-down state, otherwise a value > =  14 enables the PLL for normal operation as a clock synthesizer."
+      type: Scalar
+      offset: 20
+      length: 6
+      mode: RW
+    PLL_FRAC:
+      description: "20-bit fractional divide (default setting is for 28.63636 MHz xtal and 27 MHz PLL frequency)"
+      type: Scalar
+      offset: 0
+      length: 20
+      mode: RW
+PLL Adjust Control Register:
+  addresses:
+    0x31016c: 
+  fields:
+    PLL_ADJ_EN:
+      description: "Enable PLL adjust logic 0 = disable 1 = enable"
+      type: Boolean
+      offset: 25
+      mode: RW
+    PLL_MAX_OFFSET:
+      description: "Maximum internal PLL adjustment"
+      type: Scalar
+      offset: 19
+      length: 6
+      mode: RW
+    PLL_DRIFT_TH:
+      description: ""
+      type: Scalar
+      offset: 14
+      length: 5
+      mode: RW
+    PLL_TH2:
+      description: "PLL threshold"
+      type: Scalar
+      offset: 7
+      length: 7
+      mode: RW
+    PLL_TH1:
+      description: "PLL threshold"
+      type: Scalar
+      offset: 0
+      length: 7
+      mode: RW
+Sample Rate Conversion Register:
+  addresses:
+    0x310170: 
+  fields:
+    SRC_REG_VAL:
+      description: "19bit SRC programmable value. This is a ratio of the ADC clock rate to video clock rate. (ADC sampling frequency/Video decoder core frequency) * 217"
+      type: Scalar
+      offset: 0
+      length: 19
+      mode: RW
+Sample Rate Conversion FIFO:
+  addresses:
+    0x310174: 
+  fields:
+    SRC_UP_LMT:
+      description: "SRC FIFO upper limit"
+      type: Scalar
+      offset: 12
+      length: 10
+      mode: RW
+    SRC_LOW_LMT:
+      description: "SRC FIFO lower limit"
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Subcarrier Step Size:
+  addresses:
+    0x310178: 
+  fields:
+    SCSTEP:
+      description: "Subcarrier step size SCSTEP = (8*Fsc/video decoder core clock frequency) * 222"
+      type: Scalar
+      offset: 0
+      length: 23
+      mode: RW
+Subcarrier Step Size for DR Line:
+  addresses:
+    0x31017c: 
+  fields:
+    DRSCSTEP:
+      description: "Subcarrier step size for DR Line DRSCSTEP = (8*4406250/video decoder core clock frequency) * 222"
+      type: Scalar
+      offset: 0
+      length: 23
+      mode: RW
+Capture Control:
+  addresses:
+    0x310180: 
+  fields:
+    CAP_RAW_ALL:
+      description: "A value of 1 enables continuous raw data mode capture."
+      type: Boolean
+      offset: 6
+      mode: RW
+    RAW16:
+      description: "0 = 8xFsc 8-bit data mode (Raw Data) 1 = 4xFsc 16-bit data mode (Filtered VBI data)"
+      type: Boolean
+      offset: 5
+      mode: RW
+    CAPTURE_VBI_ODD:
+      description: "A value of 1 enables VBI data to be captured into the FIFO during the odd field."
+      type: Boolean
+      offset: 4
+      mode: RW
+    CAPTURE_VBI_EVEN:
+      description: "A value of 1 enables VBI data to be captured into the FIFO during the even field."
+      type: Boolean
+      offset: 3
+      mode: RW
+    CAPTURE_ODD:
+      description: "A value of 1 enables odd capture and allows video decoder to write data to FIFOs during the odd field."
+      type: Boolean
+      offset: 2
+      mode: RW
+    CAPTURE_EVEN:
+      description: "A value of 1 enables even capture and allows video decoder to write data to FIFOs during the even field."
+      type: Boolean
+      offset: 1
+      mode: RW
+    FRM_DITH:
+      description: "0 = Dither matrix applied to consecutive lines in a field 1 = Full frame mode"
+      type: Boolean
+      offset: 0
+      mode: RW
+Color Format/Control:
+  addresses:
+    0x310184: 
+  fields:
+    COLOR_EN:
+      description: "A value of 1 enables a color bars pattern at the input of the VDFC block."
+      type: Boolean
+      offset: 14
+      mode: RW
+    RGB_DED:
+      description: "A value of 0 enables error diffusion for RGB16/RGB15 modes. A value of 1 disables it."
+      type: Boolean
+      offset: 13
+      mode: RW
+    GAMMA_DIS:
+      description: "A value of 0 enables gamma correction removal. The inverse gamma correction factor of 2.2 or 2.8 is applied and auto-selected by the respective mode NTSC/PAL. A value of 1 disables gamma correction removal."
+      type: Boolean
+      offset: 12
+      mode: RW
+    WSWAP_ODD:
+      description: "WordSwap Odd Field. A value of 1 enables word swapping of data entering the FIFO. W2[31:16] swapped with W0[15:0]."
+      type: Boolean
+      offset: 11
+      mode: RW
+    WSWAP_EVEN:
+      description: "WordSwap Even Field. A value of 1 enables word swapping of data entering the FIFO. W2[31:16] swapped with W0[15:0]."
+      type: Boolean
+      offset: 10
+      mode: RW
+    BSWAP_ODD:
+      description: "ByteSwap Odd Field. A value of 1 enables byte swapping of data entering the FIFO. B3[31:24] swapped with B2[23:16] and B1[15:8] swapped with B0[7:0]."
+      type: Boolean
+      offset: 9
+      mode: RW
+    BSWAP_EVEN:
+      description: "ByteSwap Even Field. A value of 1 enables byte swapping of data entering the FIFO. B3[31:24] swapped with B2[23:16] and B1[15:8] swapped with B0[7:0]."
+      type: Boolean
+      offset: 8
+      mode: RW
+    COLOR_ODD:
+      description: "Odd Field Color Format 0000 = RGB32 0001 = RGB24 0010 = RGB16 0011 = RGB15 0100 = YUV2 4:2:2 0101 = BtYUV 4:1:1 0110 = Y8 (Gray scale) 0111 = TGB8 (Dithered) 1000 = YcrCb 4:2:2 Planar 1001 = YcrCb 4:1:1 Planar (YUV9,YUV12) 1010 = Reserved 1011 = Reserved 1100 = Reserved 1101 = Reserved 1110 = Raw 8x Data 1111 = Reserved"
+      type: Scalar
+      offset: 4
+      length: 4
+      mode: RW
+    COLOR_EVEN:
+      description: "Even Field Color Format 0000 = RGB32 0001 = RGB24 0010 = RGB16 0011 = RGB15 0100 = YUV2 4:2:2 0101 = BtYUV 4:1:1 0110 = Y8 (Gray scale) 0111 = TGB8 (Dithered) 1000 = YcrCb 4:2:2 Planar 1001 = YcrCb 4:1:1 Planar 1010 = Reserved 1011 = Reserved 1100 = Reserved 1101 = Reserved 1110 = Raw 8x Data 1111 = Reserved"
+      type: Scalar
+      offset: 0
+      length: 4
+      mode: RW
+VBI Packet Size/Delay:
+  addresses:
+    0x310188: 
+  fields:
+    FRM_SIZE:
+      description: "VBI Frame Size Used in both RAW all mode and VBI frame mode specifies # of bytes packed in each packet has to be QWORD boundary."
+      type: Scalar
+      offset: 17
+      length: 12
+      mode: RW
+    VBI_V_DEL:
+      description: "The number of CLKx1’s to delay from the trailing edge of HRESET before starting VBI line capture. Used in both VBI line mode and VBI frame mode, where in VBI frame mode it has to set to a value of 2."
+      type: Scalar
+      offset: 11
+      length: 6
+      mode: RW
+    EXTERN:
+      description: "A value of 1 extends the frame output capture region to include the 20 half lines prior to the default VACTIVE region."
+      type: Boolean
+      offset: 10
+      mode: RW
+    VBI_PKT_SIZE:
+      description: "VBI Packet Size. The number of raw data dwords (four 8-bit samples) to capture per line while in VBI capture mode (only used in VBI line mode)."
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+Field Capture Counter:
+  addresses:
+    0x310190: 
+  fields:
+    FCNTR:
+      description: "Counts field transitions when any CAPTURE bit is set. Any write to this register resets the content to 0."
+      type: Scalar
+      offset: 0
+      length: 10
+      mode: RW
+VIP Configuration:
+  addresses:
+    0x310194: 
+  fields:
+    VIP_DROP:
+      description: "Enables frame rate reduction by dropping every other frame in a progressive source, or every other field in an interlace source."
+      type: Boolean
+      offset: 4
+      mode: RW
+    VIP_VS_INT:
+      description: "Enable VIP vertical scaler interface mode. Used when data from both fields is used in creating scaled image. Typically only used on interface sources when the vertical scaling ration is less than 2:1. I.E. Between full resolution and CIF resolution. Should not be used when scaling progressive scan sources."
+      type: Boolean
+      offset: 3
+      mode: RW
+    VIP_C_SCALE:
+      description: "Enable Chroma scaling in vertical scaler"
+      type: Boolean
+      offset: 2
+      mode: RW
+    VIP_MODE:
+      description: "VIP 1.1/VIP2.0 selection 0 = VIP 1.1 1 = VIP 2.0"
+      type: Boolean
+      offset: 1
+      mode: RW
+    VIP_IN_EN:
+      description: "Enable VIP input port. VIP input clock must be running prior to enabling the VIP input port."
+      type: Boolean
+      offset: 0
+      mode: RW
+VIP Contrast and Brightness:
+  addresses:
+    0x310198: 
+  fields:
+    VIP_CONTRAST:
+      description: "The luminance portion of the VIP data is multiplied by this contrast value. Values from 00 to FF are allowed. Range is 0 to 1.992."
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    VIP_BRIGHT:
+      description: "Brightness offset applied to the VIP data. Values from 00 to FF are allowed. The 2’s complement value programmed into this register is added to the luminance portion of the VIP data. Brightness is applied after contrast."
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+VIP Saturation:
+  addresses:
+    0x31019c: 
+  fields:
+    VIP_SAT:
+      description: "VIP_SAT gain will apply to the VIP chroma data. Values from 00 to FF are allowed. Range is 0 to 1.992"
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+VIP Horizontal Scaling:
+  addresses:
+    0x3101a0: 
+  fields:
+    VIP_HSCALE:
+      description: "Horizontal Scaling Ratio"
+      type: Scalar
+      offset: 0
+      length: 16
+      mode: RW
+VIP Vertical Scaling:
+  addresses:
+    0x3101a4: 
+  fields:
+    VIP_VFILT:
+      description: "These bits control the number of taps in the VIP Vertical Scaling Filter. The number of taps must be chosen in conjunction with the VIP horizontal scale factor to ensure the needed data does not overflow the internal FIFO. 000 = 2-tap interpolation only(1) 001 = 3-tap interpolation(2) 010 = 4-tap interpolation(3) 011 = 5-tap interpolation(3) 100 = 2-tap and no interpolation(1) 101 = 3-tap and no interpolation(2) 110 = 4-tap and no interpolation(3) 111 = 5-tap and no interpolation(3)"
+      type: Scalar
+      offset: 13
+      length: 3
+      mode: RW
+    VIP_VSCALE:
+      description: "Vertical Scaling Ratio"
+      type: Scalar
+      offset: 0
+      length: 13
+      mode: RW
+VBOS Control:
+  addresses:
+    0x3101a8: 
+  fields:
+    VIP_VBIT:
+      description: "VIP V-Bit setting 0 = normal V-bit generation 1 = new V-bit equals (V-bit and T-bit)"
+      type: Boolean
+      offset: 21
+      mode: RW
+    VIP_OPT_AL:
+      description: "VIP optional active line enable"
+      type: Boolean
+      offset: 20
+      mode: RW
+    CLKGT:
+      description: "GPCLKO gating 0 = CLKx1 or CLKx2 is inverted and gated with VALID and ACTIVE to create GPCLKO. Used in punctured clock mode. 1 = CLKx1 or CLKx2 is inverted and gated with VALID to create GPCLKO when VLDFMT = 0. Used in 656 mode."
+      type: Boolean
+      offset: 19
+      mode: RW
+    VIP_LINE_DLY:
+      description: "When this bit is set, the output of the VIP control codes will be delayed by one line to match the delay introduced by the comb filter."
+      type: Boolean
+      offset: 18
+      mode: RW
+    MODE656:
+      description: "ITU-R-BT.656 mode 0 = disable 1 = enable"
+      type: Boolean
+      offset: 17
+      mode: RW
+    MODE10B:
+      description: "Pixel output mode 0 = 8 bit output 1 = 10 bit output"
+      type: Boolean
+      offset: 16
+      mode: RW
+    VBIEN:
+      description: "Enable VBI capture 0 = Disable VBI capture 1 = Enable VBI capture"
+      type: Boolean
+      offset: 15
+      mode: RW
+    VLDFMT:
+      description: "VALID format 0 = VALID indicates nonscaled pixels 1 = VALID is logical AND of nominal VALID and ACTIVE, where ACTIVE is controlled by ACTFMT. GPCLKO is inverted CLKx1 or CLKx2."
+      type: Boolean
+      offset: 14
+      mode: RW
+    VBIFMT:
+      description: "VBI Output Format 0 = Pixel N on VD[15:8], Pixel N+1 on VD[7:0] 1 = Pixel N on VD[7:0], Pixel N+1 on VD[15:8]"
+      type: Boolean
+      offset: 13
+      mode: RW
+    VBIFRM:
+      description: "VBI Frame (raw) mode 0 = VBI frame mode disabled 1 = VBI frame mode enabled"
+      type: Boolean
+      offset: 12
+      mode: RW
+    ACTFMT:
+      description: "ACTIVE format 0 = ACTIVE is composite active 1 = ACTIVE is horizontal active"
+      type: Boolean
+      offset: 11
+      mode: RW
+    BSTRMEN:
+      description: "Enables Bytestream control code insertion 0 = No Bytestream control codes 1 = Bytestream control codes inserted"
+      type: Boolean
+      offset: 10
+      mode: RW
+    VIPEN:
+      description: "Enables VIP control code insertion 0 = NO VIP control codes 1 = VIP control codes inserted"
+      type: Boolean
+      offset: 9
+      mode: RW
+    NBYTE:
+      description: "0 = 8-bit output (GPCLKO = CLKx2) 1 = 16-bit output (GPCLKO = CLKx1)"
+      type: Boolean
+      offset: 8
+      mode: RW
+    VPOLE:
+      description: ""
+      type: Scalar
+      offset: 1
+      length: 7
+      mode: RW
+AGC Back Porch/VBI/Interval Counter Control:
+  addresses:
+    0x310200: 
+  fields:
+    CLAMP_VBI_EN:
+      description: ""
+      type: Boolean
+      offset: 27
+      mode: RW
+    AGC_VBI_EN:
+      description: ""
+      type: Boolean
+      offset: 26
+      mode: RW
+    BP_REF_SEL:
+      description: "Back Porch reference Select 0 = Selects WhiteCrush for Back Porch reference 1 = Selects BP_REF register for Back Porch reference"
+      type: Boolean
+      offset: 25
+      mode: RW
+    BP_REF:
+      description: "Sets desired value for Back Porch"
+      type: Scalar
+      offset: 16
+      length: 9
+      mode: RW
+    INTRVL_CNT_VAL:
+      description: "Maximum count for interval counter in min-max detect"
+      type: Scalar
+      offset: 0
+      length: 12
+      mode: RW
+AGC Sync Slicer:
+  addresses:
+    0x310204: 
+  fields:
+    DLY_UPD_EN:
+      description: ""
+      type: Boolean
+      offset: 21
+      mode: RW
+    SAM_SYNC_EN:
+      description: ""
+      type: Boolean
+      offset: 20
+      mode: RW
+    STD_SLICE_EN:
+      description: "Enables standard sync slicer"
+      type: Boolean
+      offset: 19
+      mode: RW
+    MM_MULT:
+      description: ""
+      type: Scalar
+      offset: 16
+      length: 3
+      mode: RW
+    BP_SAM_DLY:
+      description: "Back porch sample delay"
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    SYNC_SAM_DLY:
+      description: "Sync sample delay"
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+AGC Sync Tip Adjust 1:
+  addresses:
+    0x310208: 
+  fields:
+    TRK_MODE_THR:
+      description: ""
+      type: Scalar
+      offset: 17
+      length: 12
+      mode: RW
+    TRK_CORE_THR:
+      description: "Sets coring threshold level during tracking mode"
+      type: Scalar
+      offset: 9
+      length: 8
+      mode: RW
+    TRK_G_VAL:
+      description: "Set gain level during tracking mode 00 = x1 gain 01 = x2 gain 10 = x4 gain 11 = x8 gain"
+      type: Scalar
+      offset: 7
+      length: 2
+      mode: RW
+    TRK_SAT_VAL:
+      description: "Set saturation level during tracking mode"
+      type: Scalar
+      offset: 0
+      length: 7
+      mode: RW
+AGC Sync Tip Adjust 2:
+  addresses:
+    0x31020c: 
+  fields:
+    ACQ_MODE_THR:
+      description: ""
+      type: Scalar
+      offset: 17
+      length: 12
+      mode: RW
+    ACQ_CORE_THR:
+      description: "Sets coring threshold level during acquisition mode"
+      type: Scalar
+      offset: 9
+      length: 8
+      mode: RW
+    ACQ_G_VAL:
+      description: "Set gain level during acquisition mode 00 = x1 gain 01 = x2 gain 10 = x4 gain 11 = x8 gain"
+      type: Scalar
+      offset: 7
+      length: 2
+      mode: RW
+    ACQ_SAT_VAL:
+      description: "Set saturation level during acquisition mode"
+      type: Scalar
+      offset: 0
+      length: 7
+      mode: RW
+AGC Sync Tip Adjust 3:
+  addresses:
+    0x310210: 
+  fields:
+    LOW_STIP_TH:
+      description: ""
+      type: Scalar
+      offset: 16
+      length: 13
+      mode: RW
+    ACC_MIN:
+      description: "Accumulator"
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    ACC_MAX:
+      description: "Accumulator"
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+AGC Gain Adjust 1:
+  addresses:
+    0x310214: 
+  fields:
+    TRK_AGC_MODE_TH:
+      description: ""
+      type: Scalar
+      offset: 17
+      length: 12
+      mode: RW
+    TRK_AGC_CORE_TH_VAL:
+      description: "Sets coring threshold level during tracking mode"
+      type: Scalar
+      offset: 9
+      length: 8
+      mode: RW
+    TRK_GAIN_VAL:
+      description: "AGC error gain (in powers of 2) for tracking mode"
+      type: Scalar
+      offset: 7
+      length: 2
+      mode: RW
+    TRK_AGC_SAT_VAL:
+      description: "AGC error saturation value for tracking mode"
+      type: Scalar
+      offset: 0
+      length: 7
+      mode: RW
+AGC Gain Adjust 2:
+  addresses:
+    0x310218: 
+  fields:
+    ACQ_AGC_MODE_TH:
+      description: ""
+      type: Scalar
+      offset: 17
+      length: 12
+      mode: RW
+    ACQ_AGC_CORE_TH_VAL:
+      description: "Sets coring threshold level during acquisition mode"
+      type: Scalar
+      offset: 9
+      length: 8
+      mode: RW
+    ACQ_GAIN_VAL:
+      description: "AGC error gain (in powers of 2) for acquisition mode"
+      type: Scalar
+      offset: 7
+      length: 2
+      mode: RW
+    ACQ_AGC_SAT_VAL:
+      description: "AGC error saturation value for acquisition mode"
+      type: Scalar
+      offset: 0
+      length: 7
+      mode: RW
+AGC Gain Adjust 3:
+  addresses:
+    0x31021c: 
+  fields:
+    ACC_MIN_VAL:
+      description: "Minimum value for AGC accumulator"
+      type: Scalar
+      offset: 16
+      length: 8
+      mode: RW
+    ACC_MAX_VAL:
+      description: "Maximum value for AGC accumulator"
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    ACC_INC_VAL:
+      description: ""
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+AGC Gain Adjust 4:
+  addresses:
+    0x310220: 
+  fields:
+    INIT_6DB_VAL:
+      description: "0 = ON (+ 6 dB) 1 = OFF (no gain)"
+      type: Boolean
+      offset: 23
+      mode: RW
+    SLICE_REF_EN:
+      description: ""
+      type: Boolean
+      offset: 22
+      mode: RW
+    VGA_EN:
+      description: ""
+      type: Boolean
+      offset: 21
+      mode: RW
+    INIT_VGA_VAL:
+      description: "Initial value to be loaded to the VGA counter"
+      type: Scalar
+      offset: 16
+      length: 5
+      mode: RW
+    LOW_ACC_VAL:
+      description: "Minimum value to be compared with digital gain accumulator output to qualify a decrement in VGA counter"
+      type: Scalar
+      offset: 8
+      length: 8
+      mode: RW
+    HIGH_ACC_VAL:
+      description: "Maximum value to be compared with digital gain accumulator output to qualify a increment in VGA counter"
+      type: Scalar
+      offset: 0
+      length: 8
+      mode: RW
+IPB DMAC Current Buffer Pointer:
+  addresses:
+    0x300080: DMA21_PTR1
+    0x300084: DMA22_PTR1
+    0x300088: DMA23_PTR1
+    0x30008c: DMA24_PTR1
+  fields:
+    DMAx_PTR1:
+      description: "Current DMA qword address pointer. Points to next qword transfer location within source or destination buffer. Always dword-aligned."
+      type: Scalar
+      offset: 2
+      length: 22
+      mode: RO
+    Reserved:
+      description: ""
+      type: Scalar
+      offset: 0
+      length: 2
+      mode: RO
+IPB DMAC Current Table Pointer:
+  addresses:
+    0x3000c0: DMA21_PTR2
+    0x3000c4: DMA22_PTR2
+    0x3000c8: DMA23_PTR2
+    0x3000cc: DMA24_PTR2
+  fields:
+    DMAx_PTR2:
+      description: "Current DMA CDT address pointer. Points to current CDT entry. Always dword-aligned."
+      type: Scalar
+      offset: 2
+      length: 22
+      mode: RW
+    Reserved:
+      description: ""
+      type: Scalar
+      offset: 0
+      length: 2
+      mode: RO
+IPB DMAC Buffer Limit:
+  addresses:
+    0x300100: DMA21_CNT1
+    0x300104: DMA22_CNT1
+    0x300108: DMA23_CNT1
+    0x30010c: DMA24_CNT1
+  fields:
+    DMAx_CNT1:
+      description: "Initialize to DMA buffer size in # of qwords. Increments during DMA data transfers and reloads when next CDT pointer is fetched."
+      type: Scalar
+      offset: 0
+      length: 11
+      mode: RW
+IPB DMAC Table Size:
+  addresses:
+    0x300140: DMA21_CNT2
+    0x300144: DMA22_CNT2
+    0x300148: DMA23_CNT2
+    0x30014c: DMA24_CNT2
+  fields:
+    DMAx_CNT2:
+      description: "Initialize to DMA CDT size in # of qwords."
+      type: Scalar
+      offset: 0
+      length: 11
+      mode: RW
+General Purpose Counter (Immediate Access):
+  addresses:
+    0x31c020: VIDY_GP_CNT
+    0x31c024: VIDU_GP_CNT
+    0x31c028: VIDV_GP_CNT
+    0x31c02c: VBI_GP_CNT
+  fields:
+    x_GP_CNT:
+      description: "General purpose counter used by RISC program."
+      type: Scalar
+      offset: 0
+      length: 16
+      mode: RO
+General Purpose Counter Control (Immediate Access):
+  addresses:
+    0x31c030: VIDY_GP_CNT_CNTRL
+    0x31c034: VIDU_GP_CNT_CNTRL
+    0x31c038: VIDV_GP_CNT_CNTRL
+    0x31c03c: VBI_GP_CNT_CNTRL
+  fields:
+    x_GP_CNT_CNTRL:
+      description: "General purpose counter control used by RISC program: 00 = no change 01 = increment 10 = reserved 11 = reset to 0"
+      type: Scalar
+      offset: 0
+      length: 2
+      mode: WO
+IPB DMA Control (Immediate Access):
+  addresses:
+    0x31c040: VID_DMA_CNTRL
+  fields:
+    VBI_RISC_EN:
+      description: "VBI RISC controller enable."
+      type: Boolean
+      offset: 7
+      mode: RW
+    VIDV_RISC_EN:
+      description: "Planar V RISC controller enable."
+      type: Boolean
+      offset: 6
+      mode: RW
+    VIDU_RISC_EN:
+      description: "Planar U RISC controller enable."
+      type: Boolean
+      offset: 5
+      mode: RW
+    VIDY_RISC_EN:
+      description: "Planar Y and packed RISC controller enable."
+      type: Boolean
+      offset: 4
+      mode: RW
+    VBI_FIFO_EN:
+      description: "VBI FIFO enable."
+      type: Boolean
+      offset: 3
+      mode: RW
+    VIDV_FIFO_EN:
+      description: "Planar V FIFO enable."
+      type: Boolean
+      offset: 2
+      mode: RW
+    VIDU_FIFO_EN:
+      description: "Planar U FIFO enable."
+      type: Boolean
+      offset: 1
+      mode: RW
+    VIDY_FIFO_EN:
+      description: "Planar Y and packed FIFO enable."
+      type: Boolean
+      offset: 0
+      mode: RW
+Video Transfer Status Register (Immediate access):
+  addresses:
+    0x31c044: VID_XFER_STATUS
+  fields:
+    XFER_IN_PROG:
+      description: "Video transfer in progress signal. This may be used to determine when it is safe to access the video registers. This register returns a value immediately, thus it doesn’t follow the delayed read rules."
+      type: Boolean
+      offset: 0
+      mode: RO
+Video Interrupt Mask:
+  addresses:
+    0x200050: VID_INT_MSK
+  fields:
+    VID_INT_MSK:
+      description: "A value of 1 enables the corresponding interrupt bit location in the VID_INT_STAT register. Unmasking a bit may generate an interrupt immediately due to a previously pending condition. The interrupt remains asserted until the device driver clears or masks the pending request."
+      type: Scalar
+      offset: 0
+      length: 20
+      mode: RW
+Video Interrupt Status:
+  addresses:
+    0x200054: VID_INT_STAT
+  fields:
+    PCI_ABORT:
+      description: "Set when the PCI master does a master-abort, or a target responds with a target-abort."
+      type: Boolean
+      offset: 19
+      mode: RR
+    RIP_ERR:
+      description: "Set when a data parity error is detected (parity error response must be set while the master is reading RISC instructions."
+      type: Boolean
+      offset: 18
+      mode: RR
+    PAR_ERR:
+      description: "Set when a parity error is detected on the PCI bus for any of the transactions, R/W, address/data phases, master/target, regardless of the parity error response bit."
+      type: Boolean
+      offset: 17
+      mode: RR
+    OPC_ERR:
+      description: "Set when the RISC controller detects a reserved/ unused opcode in the instruction sequence."
+      type: Boolean
+      offset: 16
+      mode: RR
+    VBI_SYNC:
+      description: "Set when number of lines or bytes do not match the VBI RISC program expectations."
+      type: Boolean
+      offset: 15
+      mode: RR
+    V_SYNC:
+      description: "Set when number of lines or bytes do not match the V video RISC program expectations."
+      type: Boolean
+      offset: 14
+      mode: RR
+    U_SYNC:
+      description: "Set when number of lines or bytes do not match the U video RISC program expectations."
+      type: Boolean
+      offset: 13
+      mode: RR
+    Y_SYNC:
+      description: "Set when number of lines or bytes do not match the Y video RISC program expectations."
+      type: Boolean
+      offset: 12
+      mode: RR
+    VBIF_OF:
+      description: "Set when VBI FIFO overflow condition is being handled."
+      type: Boolean
+      offset: 11
+      mode: RR
+    VF_OF:
+      description: "Set when V video FIFO overflow condition is being handled."
+      type: Boolean
+      offset: 10
+      mode: RR
+    UF_OF:
+      description: "Set when U video FIFO overflow condition is being handled."
+      type: Boolean
+      offset: 9
+      mode: RR
+    YF_OF:
+      description: "Set when Y video FIFO overflow condition is being handled."
+      type: Boolean
+      offset: 8
+      mode: RR
+    VBI_RISCI2:
+      description: "Set when the IRQ2 bit in a VBI RISC instruction is set."
+      type: Boolean
+      offset: 7
+      mode: RR
+    V_RISCI2:
+      description: "Set when the IRQ2 bit in a V video RISC instruction is set."
+      type: Boolean
+      offset: 6
+      mode: RR
+    U_RISCI2:
+      description: "Set when the IRQ2 bit in a U video RISC instruction is set."
+      type: Boolean
+      offset: 5
+      mode: RR
+    Y_RISCI2:
+      description: "Set when the IRQ2 bit in a Y video RISC instruction is set."
+      type: Boolean
+      offset: 4
+      mode: RR
+    VBI_RISCI1:
+      description: "Set when the IRQ1 bit in a VBI RISC instruction is set."
+      type: Boolean
+      offset: 3
+      mode: RR
+    V_RISCI1:
+      description: "Set when the IRQ1 bit in a V video RISC instruction is set."
+      type: Boolean
+      offset: 2
+      mode: RR
+    U_RISCI1:
+      description: "Set when the IRQ1 bit in a U video RISC instruction is set."
+      type: Boolean
+      offset: 1
+      mode: RR
+    Y_RISCI1:
+      description: "Set when the IRQ1 bit in a Y video RISC instruction is set."
+      type: Boolean
+      offset: 0
+      mode: RR
+Video Interrupt Masked Status:
+  addresses:
+    0x200058: VID_INT_MSTAT
+  fields:
+    VID_INT_MSTAT:
+      description: "These bits are the logical AND of the corresponding bits in the status and mask registers."
+      type: Scalar
+      offset: 0
+      length: 20
+      mode: RO
+Video Interrupt Set Status:
+  addresses:
+    0x0: —
+  fields:
+    VID_INT_SSTAT:
+      description: "Writing a 1 to these bits will set the corresponding bits in the status register."
+      type: Scalar
+      offset: 0
+      length: 17
+      mode: WO
