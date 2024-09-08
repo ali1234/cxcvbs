@@ -213,13 +213,13 @@ class Memory(object):
             pass
         try:
             return WrappedMemory(self, Cluster.by_addr(arg))
-        except (KeyError, ValueError):
+        except (KeyError, ValueError, SyntaxError):
             pass
         try:
             addr = ast.literal_eval(arg)
             if isinstance(addr, int) and 0 <= addr < self._size and (addr & 3) == 0:
                 return WrappedMemory(self, RawAddress(addr))
-        except ValueError:
+        except (ValueError, SyntaxError):
             pass
         raise KeyError
 
