@@ -36,10 +36,11 @@ class Video:
                                     2048, 1024)
         SDL_SetTextureScaleMode(self._texture, SDL_ScaleModeBest)
         self._palette = np.repeat(np.arange(256, dtype=np.uint8).reshape(-1, 1), 4, axis=1)
-        for n in range(64):
-            self._palette[n] = (0, 0, 255 - (4 * n), 255)
-        for n in range(220, 256):
-            self._palette[n] = (0, 255, 0, 255)
+
+        self._palette[0] = (0, 0, 255, 255)
+        for n in range(1, 64):
+            self._palette[n] = (n*4, 0, 0, 255)
+        self._palette[255] = (0, 255, 0, 255)
 
     def calculate_timings(self):
         self._samples_per_line = round(self._sample_rate / (self._refresh * self._lines))
@@ -69,6 +70,19 @@ class Video:
                 yp = ypos + (y * 16) + ((y // 4) * 4)
                 (SDL_RenderFillRect if b else SDL_RenderDrawRect)(self._renderer, SDL_Rect(xp, yp, 14, 14))
 
+    def draw_histogram(self, data, xpos=1144, ypos=1030):
+        histogram = np.bincount(data)
+#        histogram = np.sqrt(histogram)
+#        histogram = ((histogram * 200) // np.max(histogram)).astype(np.uint32)
+        histogram = np.clip(histogram>>6, 0, 200)
+        SDL_SetRenderDrawColor(self._renderer, 0, 0, 255, 255)
+        SDL_RenderDrawLine(self._renderer, xpos + 128, ypos, xpos + 128, ypos - 200)
+        SDL_SetRenderDrawColor(self._renderer, 255, 255, 255, 255)
+        SDL_RenderDrawLine(self._renderer, xpos, ypos, xpos + 512, ypos)
+        for n in range(histogram.shape[0]):
+            SDL_RenderDrawLine(self._renderer, xpos + (n * 2), ypos, xpos + (n * 2),
+                               ypos - histogram[n])
+
 
     def run(self):
 
@@ -89,21 +103,24 @@ class Video:
                 elif event.type == SDL_KEYUP:
                     print(event.key)
 
-            data = self._cxadc.read(self._samples_per_frame)
+            data = np.frombuffer(self._cxadc.read(self._samples_per_frame), dtype=np.uint8)
+
             c += self._frac
             while c > 1:
                 c -= 1
                 self._cxadc.read(1)
-            data = self._palette[np.frombuffer(data, dtype=np.uint8)]
+            img = self._palette[data]
             SDL_SetRenderDrawColor(self._renderer, 0, 0, 0, 255)
             SDL_RenderClear(self._renderer)
-            SDL_UpdateTexture(self._texture, SDL_Rect(0, 0, self._samples_per_line, self._lines), data.tobytes(), self._samples_per_line*4)
+            SDL_UpdateTexture(self._texture, SDL_Rect(0, 0, self._samples_per_line, self._lines), img.tobytes(), self._samples_per_line*4)
             SDL_RenderCopy(self._renderer, self._texture, SDL_Rect(0, 0, self._samples_per_line, self._lines), SDL_Rect(0, 0, screenw, self._lines if self.show_regs else screenh))
 
             if self.show_regs:
                 self.draw_bits(self._registers.read_block(0x310100, 0x60), 20, 636)
                 self.draw_bits(self._registers.read_block(0x310160, 0x4c), 20 + (1680//3), 636)
                 self.draw_bits(self._registers.read_block(0x310200, 0x28), 20 + (2*1680//3), 636)
+
+                self.draw_histogram(data)
 
             SDL_RenderPresent(self._renderer)
 
