@@ -1,13 +1,8 @@
-"""Simple example for using sdl2 directly."""
-import os
-import sys
 import ctypes
 import numpy as np
 from PIL import Image
 
 from sdl2 import *
-
-from . import command
 
 screenw, screenh = 1680, 1050
 overscan = 0
@@ -50,6 +45,10 @@ class Video:
     def set_standard(self, refresh, lines):
         self._refresh = refresh
         self._lines = lines
+        self.calculate_timings()
+
+    def set_sample_rate(self, rate):
+        self._sample_rate = rate
         self.calculate_timings()
 
     @property

@@ -1,7 +1,6 @@
 import click
 import os
 import pathlib
-import threading
 
 from . import memory
 from . import video
@@ -12,7 +11,7 @@ from . import command
 @click.option('-d', '--device', type=click.Path(readable=True), default='/dev/cxadc0')
 @click.option('--video/--no-video', 'show_video', default=True, help='Show video on screen')
 @click.option('--regs/--no-regs', 'show_regs', default=True, help='Show registers on video')
-@click.option('-x', '--xtal', type=int, default=28636644)
+@click.option('-x', '--xtal', type=int, default=28636383)
 @click.option('-s', '--standard', type=click.Choice(('PAL', 'NTSC')), default='PAL')
 def main(device, show_video, show_regs, xtal, standard):
     size = 0x400000

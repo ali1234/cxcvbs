@@ -116,8 +116,19 @@ class Command(cmd.Cmd):
             self._video.set_standard(29.97, 525)
 
     def do_screenshot(self, arg):
+        """Save a screenshot"""
         if self._video:
             self._video.screenshot = True
+
+    def do_sam(self, arg):
+        """Set nominal sample rate"""
+        if self._video:
+            try:
+                rate = ast.literal_eval(arg)
+                if isinstance(rate, int):
+                    self._video.set_sample_rate(rate)
+            except (SyntaxError, ValueError):
+                print("Invalid rate")
 
     def do_exit(self, arg):
         """Exit the program"""
