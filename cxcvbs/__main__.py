@@ -8,7 +8,7 @@ from . import command
 
 
 @click.command()
-@click.option('-d', '--device', type=click.Path(readable=True), default='/dev/cxadc0')
+@click.option('-d', '--device', type=click.Path(readable=True), default='/dev/swradio0')
 @click.option('--video/--no-video', 'show_video', default=True, help='Show video on screen')
 @click.option('--regs/--no-regs', 'show_regs', default=True, help='Show registers on video')
 @click.option('-x', '--xtal', type=int, default=28636383)
