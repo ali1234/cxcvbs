@@ -7,13 +7,15 @@ name = "cxcvbs"
 authors = [{name = "Alistair Buxton", email = "a.j.buxton@gmail.com"}]
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
-dynamic = ["version", "description"]
+dynamic = ["version"]
 dependencies = [
+    "cffi",
     "click",
     "numpy",
     "pillow",
     "pysdl2",
     "pyyaml",
+    "SciPy",
 ]
 
 [project.urls]
@@ -21,3 +23,6 @@ Home = "https://github.com/ali1234/cxcvbs"
 
 [project.scripts]
 cxcvbs = "cxcvbs.__main__:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "cxcvbs.__VERSION__"}

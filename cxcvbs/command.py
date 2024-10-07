@@ -13,13 +13,20 @@ class Command(cmd.Cmd):
     prompt = 'cxcvbs> '
 
     init = [
-        #"set pll_adj_en 0",
-        #"set verten 1",
-        #"set htotal 0x7ff",
-        #"mux 2",
-        #"import eNpjYTRkWMHAwNDAQBcgCKGYGDga7OGCbjCGABASAkyGDBpYhDn+e8jB2AEaQBX/IUYBAOZ/BhY=",
-        #"mux 2",
-        #"pal",
+        # zeros everything that can be safely zeroed
+        "import eNpjYTRkWMHAwNDAQBcgCKGYGDga7OGCbjCGABASAkyGDBpYhDn+e8jB2AEaQBX/IUYBAOZ/BhY=",
+
+        # free-running capture, no sync
+        "set pll_adj_en 0",
+        "set verten 1",
+        "set htotal 0x7ff",
+        "set htotal 0",
+        "set fcntr 0",
+
+        # set input and standard
+        "sam 28638174",
+        "mux 1",
+        "ntsc",
     ]
 
     def __init__(self, memory, video=None, init_cmd=None):
@@ -129,6 +136,10 @@ class Command(cmd.Cmd):
                     self._video.set_sample_rate(rate)
             except (SyntaxError, ValueError):
                 print("Invalid rate")
+
+    def do_pause(self, arg):
+        if self._video:
+            self._video.pause = ~self._video.pause
 
     def do_exit(self, arg):
         """Exit the program"""
